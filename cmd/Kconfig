@@ -263,6 +263,13 @@ config CMD_BOOTI
 	help
 	  Boot an AArch64 Linux Kernel image from memory.
 
+config BOOTM_EFI
+	bool "Support booting EFI OS images"
+	depends on CMD_BOOTEFI
+	default y
+	help
+	  Support booting EFI images via the bootm command.
+
 config BOOTM_LINUX
 	bool "Support booting Linux OS images"
 	depends on CMD_BOOTM || CMD_BOOTZ || CMD_BOOTI
