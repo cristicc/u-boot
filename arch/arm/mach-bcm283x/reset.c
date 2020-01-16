@@ -24,7 +24,11 @@
 /* max ticks timeout */
 #define BCM2835_WDOG_MAX_TIMEOUT	0x000fffff
 
+#ifdef CONFIG_BCM2835_WDT
+extern void hw_watchdog_disable(void);
+#else
 void hw_watchdog_disable(void) {}
+#endif
 
 __efi_runtime_data struct bcm2835_wdog_regs *wdog_regs;
 
