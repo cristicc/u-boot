@@ -54,6 +54,7 @@
 #define CMU_SSTSCLK		0x00C0
 
 #define CMU_DEVCLKEN1_ETH	BIT(23)
+#define CMU_DEVCLKEN1_UART3	BIT(11)
 
 #define GPIO_MFP_PWM           (0xE01B0000)
 #define MFP_CTL0               (GPIO_MFP_PWM + 0x40)

@@ -16,6 +16,9 @@
 #elif defined(CONFIG_MACH_S700)
 #include <asm/arch-owl/regs_s700.h>
 #include <dt-bindings/clock/actions,s700-cmu.h>
+#elif defined(CONFIG_MACH_S500)
+#include <asm/arch-owl/regs_s500.h>
+#include <dt-bindings/clock/actions,s500-cmu.h>
 #endif
 #include <linux/bitops.h>
 #include <linux/delay.h>
@@ -80,13 +83,17 @@ int owl_clk_enable(struct clk *clk)
 		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_UART5);
 		break;
 	case CLK_UART3:
-		if (model != S700)
+		if (model != S700 && model != S500)
 			return -EINVAL;
 		/* Source HOSC for UART3 interface */
 		clrbits_le32(priv->base + CMU_UART3CLK, CMU_UARTCLK_SRC_DEVPLL);
 		/* Enable UART3 interface clock */
 		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_UART3);
 		break;
+	case CLK_UART2:
+		if (model != S500)
+			return -EINVAL;
+		TODO
 	case CLK_RMII_REF:
 	case CLK_ETHERNET:
 		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_ETH);
@@ -112,11 +119,15 @@ int owl_clk_disable(struct clk *clk)
 		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_UART5);
 		break;
 	case CLK_UART3:
-		if (model != S700)
+		if (model != S700 && model != S500)
 			return -EINVAL;
 		/* Disable UART3 interface clock */
 		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_UART3);
 		break;
+	case CLK_UART2:
+		if (model != S500)
+			return -EINVAL;
+		TODO
 	case CLK_RMII_REF:
 	case CLK_ETHERNET:
 		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_ETH);
@@ -152,6 +163,8 @@ static const struct udevice_id owl_clk_ids[] = {
 	{ .compatible = "actions,s900-cmu", .data = S900 },
 #elif defined(CONFIG_MACH_S700)
 	{ .compatible = "actions,s700-cmu", .data = S700 },
+#elif defined(CONFIG_MACH_S500)
+	{ .compatible = "actions,s500-cmu", .data = S500 },
 #endif
 	{ }
 };

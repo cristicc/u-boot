@@ -16,6 +16,7 @@
 #endif
 
 enum owl_soc {
+	S500,
 	S700,
 	S900,
 };
@@ -60,6 +61,5 @@ struct owl_clk_priv {
 #define PLL_STABILITY_WAIT_US	50
 
 #define CMU_DEVCLKEN1_UART5	BIT(21)
-#define CMU_DEVCLKEN1_UART3	BIT(11)
 
 #endif

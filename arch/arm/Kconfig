@@ -920,6 +920,7 @@ config ARCH_OWL
 	select DM
 	select DM_ETH
 	select DM_SERIAL
+	select DM_MMC if MMC
 	select OWL_SERIAL
 	select CLK
 	select CLK_OWL
