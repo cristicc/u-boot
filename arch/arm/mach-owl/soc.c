@@ -21,6 +21,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#if defined(CONFIG_MACH_S500)
 /* Owl S500 Actions Firmware Infomation (AFI). */
 struct owl_s500_afi
 {
@@ -41,6 +42,7 @@ unsigned int owl_s500_get_ddrcap(void)
 
 	return 512;
 }
+#endif
 
 /*
  * For S500 SoC variant, DDR capacity is available via AFI.
@@ -53,6 +55,7 @@ static unsigned int owl_get_ddrcap(void)
 	unsigned int val, cap;
 
 #if defined(CONFIG_MACH_S500)
+	(void)(val);
 	cap = owl_s500_get_ddrcap();
 #elif defined(CONFIG_MACH_S700)
 	val = (readl(DMM_INTERLEAVE_PER_CH_CFG) >> 8) & 0x7;
@@ -83,6 +86,7 @@ int dram_init_banksize(void)
 	return 0;
 }
 
+#if defined(CONFIG_ARM64)
 static void show_psci_version(void)
 {
 	struct arm_smccc_res res;
@@ -93,15 +97,20 @@ static void show_psci_version(void)
 		PSCI_VERSION_MAJOR(res.a0),
 		PSCI_VERSION_MINOR(res.a0));
 }
+#endif
 
 int board_init(void)
 {
+#if defined(CONFIG_ARM64)
 	show_psci_version();
+#endif
 
 	return 0;
 }
 
 void reset_cpu(ulong addr)
 {
+#if defined(CONFIG_ARM64)
 	psci_system_reset();
+#endif
 }

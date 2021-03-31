@@ -25,6 +25,63 @@
 
 void owl_clk_init(struct owl_clk_priv *priv)
 {
+#if defined(CONFIG_MACH_S500)
+	u32 mask, val;
+
+	/* Enable DE and NOC1 system clocks */
+	setbits_le32(priv->base + CMU_DEVCLKEN0, CMU_DEVCLKEN0_DE);
+	setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_NOC1);
+	udelay(4 * PLL_STABILITY_WAIT_US);
+
+	/* Configure BUS_CLK */
+	mask = CMU_BUSCLK_PDBGDIV_MASK | CMU_BUSCLK_PERDIV_MASK |
+	       CMU_BUSCLK_NICDIV_MASK | CMU_BUSCLK_NICSRC_MASK;
+	val = CMU_BUSCLK_PDBGDIV_DIV | CMU_BUSCLK_PERDIV_DIV |
+	      CMU_BUSCLK_NICDIV_DIV;
+	clrsetbits_le32(priv->base + CMU_BUSCLK, mask, val);
+	udelay(PLL_STABILITY_WAIT_US / 10);
+
+	/* Configure BUS1_CLK */
+	val = CMU_BUSCLK1_HCLK_DIV | CMU_BUSCLK1_AHBPREDIV_DIV |
+	      CMU_BUSCLK1_APBCLK_DIV;
+	writel(val, CMU_BUSCLK1);
+
+	/* Enable divisors */
+	setbits_le32(priv->base + CMU_BUSCLK, CMU_BUSCLK_DIVEN);
+	udelay(PLL_STABILITY_WAIT_US / 10);
+
+	/* Source HOSC for DEV_CLK */
+	clrbits_le32(priv->base + CMU_DEVPLL, CMU_DEVPLL_CLK);
+	udelay(PLL_STABILITY_WAIT_US / 10);
+
+	/* Configure DEV_PLL */
+	val = readl(priv->base + CMU_DEVPLL);
+	val |= CMU_DEVPLL_EN | (CMU_DEVPLL_OUT - 10);
+	writel(val, priv->base + CMU_DEVPLL);
+	udelay(3 * PLL_STABILITY_WAIT_US / 2);
+
+	/* Source DEV_PLL for DEV_CLK */
+	setbits_le32(priv->base + CMU_DEVPLL, CMU_DEVPLL_CLK);
+	udelay(2 * PLL_STABILITY_WAIT_US);
+
+	/* Source HOSC for CORE_CLK */
+	clrsetbits_le32(priv->base + CMU_BUSCLK,
+			CMU_BUSCLK_CORESRC_MASK | CMU_BUSCLK_DIVEN,
+			CMU_BUSCLK_CORESRC_HOSC);
+	udelay(PLL_STABILITY_WAIT_US / 10);
+
+	/* Configure CORE_PLL */
+	val = readl(priv->base + CMU_COREPLL);
+	val |= CMU_COREPLL_EN | CMU_COREPLL_HOSC_EN | (CMU_COREPLL_OUT + 4);
+	writel(val, priv->base + CMU_COREPLL);
+	udelay(3 * PLL_STABILITY_WAIT_US / 2);
+
+	/* Source CORE_PLL for CORE_CLK */
+	clrsetbits_le32(priv->base + CMU_BUSCLK, CMU_BUSCLK_CORESRC_MASK,
+			CMU_BUSCLK_CORESRC_CPLL);
+	udelay(PLL_STABILITY_WAIT_US / 10);
+
+#else /* defined(CONFIG_MACH_S500) */
 	u32 bus_clk = 0, core_pll, dev_pll;
 
 #if defined(CONFIG_MACH_S900)
@@ -66,6 +123,7 @@ void owl_clk_init(struct owl_clk_priv *priv)
 	setbits_le32(priv->base + CMU_DEVPLL, CMU_DEVPLL_CLK);
 
 	udelay(PLL_STABILITY_WAIT_US);
+#endif
 }
 
 int owl_clk_enable(struct clk *clk)
@@ -93,7 +151,11 @@ int owl_clk_enable(struct clk *clk)
 	case CLK_UART2:
 		if (model != S500)
 			return -EINVAL;
-		TODO
+		/* Source HOSC for UART2 interface */
+		clrbits_le32(priv->base + CMU_UART2CLK, CMU_UARTCLK_SRC_DEVPLL);
+		/* Enable UART2 interface clock */
+		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_UART2);
+		break;
 	case CLK_RMII_REF:
 	case CLK_ETHERNET:
 		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_ETH);
@@ -127,7 +189,9 @@ int owl_clk_disable(struct clk *clk)
 	case CLK_UART2:
 		if (model != S500)
 			return -EINVAL;
-		TODO
+		/* Disable UART2 interface clock */
+		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_UART2);
+		break;
 	case CLK_RMII_REF:
 	case CLK_ETHERNET:
 		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_ETH);
