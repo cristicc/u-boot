@@ -23,7 +23,7 @@
 #include <linux/bitops.h>
 #include <linux/delay.h>
 
-void owl_clk_init(struct owl_clk_priv *priv)
+static void owl_clk_init(struct owl_clk_priv *priv)
 {
 #if defined(CONFIG_MACH_S500)
 	u32 mask, val;
