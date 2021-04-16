@@ -149,6 +149,13 @@ config OMAP_TIMER
 	help
 	  Select this to enable an timer for Omap devices.
 
+config OWL_TIMER
+	bool "Actions Semi Owl timer support"
+	depends on TIMER
+	help
+	  Select this to enable support for the timer found on
+	  Actions Semi Owl devices.
+
 config RISCV_TIMER
 	bool "RISC-V timer support"
 	depends on TIMER && RISCV
