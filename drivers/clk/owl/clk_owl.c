@@ -161,6 +161,12 @@ int owl_clk_enable(struct clk *clk)
 		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_ETH);
 		setbits_le32(priv->base + CMU_ETHERNETPLL, 5);
 		break;
+	case CLK_TIMER:
+		if (model != S500)
+			return -EINVAL;
+		/* Enable timer clock */
+		setbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_TIMER);
+		break;
 	default:
 		return -EINVAL;
 	}
@@ -195,6 +201,12 @@ int owl_clk_disable(struct clk *clk)
 	case CLK_RMII_REF:
 	case CLK_ETHERNET:
 		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_ETH);
+		break;
+	case CLK_TIMER:
+		if (model != S500)
+			return -EINVAL;
+		/* Disable timer clock */
+		clrbits_le32(priv->base + CMU_DEVCLKEN1, CMU_DEVCLKEN1_TIMER);
 		break;
 	default:
 		return -EINVAL;

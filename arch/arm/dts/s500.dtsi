@@ -246,6 +246,7 @@
 		timer: timer@b0168000 {
 			compatible = "actions,s500-timer";
 			reg = <0xb0168000 0x8000>;
+			clocks = <&cmu CLK_TIMER>;
 			interrupts = <GIC_SPI  8 IRQ_TYPE_LEVEL_HIGH>,
 			             <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>,
 			             <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,

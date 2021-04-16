@@ -339,9 +339,13 @@ F:	arch/arm/mach-owl/
 F:	doc/board/actions/
 F:	drivers/clk/owl/
 F:	drivers/serial/serial_owl.c
+F:	drivers/timer/owl-timer.c
 F:	include/configs/owl-common.h
+F:	include/configs/owl-s500.h
+F:	include/configs/owl-s900.h
 F:	configs/bubblegum_96_defconfig
 F:	configs/cubieboard7_defconfig
+F:	configs/roseapplepi_defconfig
 
 ARM RENESAS RMOBILE/R-CAR
 M:	Nobuhiro Iwamatsu <iwamatsu@nigauri.org>

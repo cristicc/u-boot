@@ -125,10 +125,6 @@
 	status = "okay";
 };
 
-&timer {
-	clocks = <&hosc>;
-};
-
 &uart2 {
 	status = "okay";
 };

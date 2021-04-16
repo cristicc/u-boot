@@ -15,6 +15,8 @@ config MACH_S700
 config MACH_S500
         bool "Actions Semi S500 SoC"
         select CPU_V7A
+        select TIMER
+        select OWL_TIMER
 
 endchoice
 
@@ -23,7 +25,8 @@ config SYS_TEXT_BASE
         default 0x08000040 if MACH_S500
 
 config SYS_CONFIG_NAME
-        default "owl-common"
+        default "owl-s900" if MACH_S900 || MACH_S700
+        default "owl-s500" if MACH_S500
 
 config SYS_SOC
         default "s900" if MACH_S900

@@ -9,6 +9,9 @@
 #ifndef _OWL_REGS_S500_H_
 #define _OWL_REGS_S500_H_
 
+/*
+ * CMU (Clock Management Unit) registers
+ */
 #define CMU_COREPLL			0x0000
 #define CMU_DEVPLL			0x0004
 #define CMU_DDRPLL			0x0008
@@ -84,6 +87,7 @@
 
 /* DEVCLKEN1 register */
 #define CMU_DEVCLKEN1_NOC1		BIT(28)
+#define CMU_DEVCLKEN1_TIMER		BIT(27)
 #define CMU_DEVCLKEN1_ETH		BIT(22)
 #define CMU_DEVCLKEN1_UART3		BIT(19)
 #define CMU_DEVCLKEN1_UART2		BIT(8)
